@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "react-app",
+    "react-app/jest",
+    "plugin:jest-dom/recommended",
+    "eslint-config-prettier"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-nested-ternary": "error",
+    "no-unused-vars": "error",
+    "no-debugger": "error"
+  }
+}
