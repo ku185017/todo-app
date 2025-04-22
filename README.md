@@ -1,4 +1,7 @@
 # Todo
+CLone this project and do **npm install** to install the dependancies.
+if npm install doesn't work, then try **npm install --force**
+
 Scripts
 
 The following scripts are available:
