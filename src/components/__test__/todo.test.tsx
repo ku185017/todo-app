@@ -9,12 +9,10 @@ describe("Todo", () => {
     const textElement = screen.getByRole("textbox");
     expect(textElement).toBeInTheDocument();
 
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     expect(buttonElement).toBeInTheDocument();
 
-    const completedHeading = screen.getByRole("heading", {
-      name: /Completed/i,
-    });
+    const completedHeading = screen.getByText(/Completed/i);
     expect(completedHeading).toBeInTheDocument();
   });
 
@@ -22,19 +20,15 @@ describe("Todo", () => {
     render(<Todo />);
     const textElement = screen.getByRole("textbox");
     fireEvent.change(textElement, { target: { value: "hello there" } });
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     expect(buttonElement).toBeEnabled();
   });
 
   it("Should check if add button gets disabled on enter key in text area", async () => {
     render(<Todo />);
     const textElement = screen.getByRole("textbox");
-    fireEvent.keyDown(textElement, {
-      key: "Enter",
-      code: "Enter",
-      charCode: 13,
-    });
-    const buttonElement = screen.getByRole("button");
+    fireEvent.submit(textElement);
+    const buttonElement = screen.getByTitle("AddButton");
     expect(buttonElement).toBeDisabled();
   });
 
@@ -46,14 +40,14 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: "hello there" } });
 
     //get the button element and press it
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     fireEvent.click(buttonElement);
 
     //Button should be disabled now
     expect(buttonElement).toBeDisabled();
   });
 
-  it("Should check if add button gets disabled for typing space", async() => {
+  it("Should check if add button gets disabled for typing space", async () => {
     render(<Todo />);
 
     //enter space in the text area
@@ -61,7 +55,7 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: " " } });
 
     //get the button
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     expect(buttonElement).toBeDisabled();
   });
 
@@ -73,7 +67,7 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: "hello there" } });
 
     //get the button element and press it
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     fireEvent.click(buttonElement);
 
     //get checkbox
@@ -89,7 +83,7 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: "hello there" } });
 
     //get the button element and press it
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     fireEvent.click(buttonElement);
 
     //check the checkbox of the "hello there" element
@@ -109,7 +103,7 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: "hello there" } });
 
     //get the button element and press it
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     fireEvent.click(buttonElement);
 
     //check the checkbox of the "hello there" element
@@ -117,7 +111,7 @@ describe("Todo", () => {
     fireEvent.click(listItemElement);
 
     //get the Completed heading, and click it.
-    const completedHeading = screen.getByRole("heading");
+    const completedHeading = screen.getByTitle("CompletedButton");
     fireEvent.click(completedHeading);
 
     //check if hello there is displayed now.
@@ -133,7 +127,7 @@ describe("Todo", () => {
     fireEvent.change(textElement, { target: { value: "hello there" } });
 
     //get the button element and press it
-    const buttonElement = screen.getByRole("button");
+    const buttonElement = screen.getByTitle("AddButton");
     fireEvent.click(buttonElement);
 
     //check the checkbox of the "hello there" element
@@ -141,7 +135,7 @@ describe("Todo", () => {
     fireEvent.click(listItemElement);
 
     //get the Completed heading, and click it.
-    const completedHeading = screen.getByRole("heading");
+    const completedHeading = screen.getByTitle("CompletedButton");
     fireEvent.click(completedHeading);
 
     //check the checkbox of the completed "hello there" element
@@ -152,6 +146,147 @@ describe("Todo", () => {
     const removedElement = screen.queryByText("hello there");
     expect(removedElement).toBeNull();
   });
+
+  it("Should check if clicking edit button makes text field visible", async() => {
+    render(<Todo />);
+
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //get the edit button and click it
+    const editButton = screen.getByTitle("hello there")
+    fireEvent.click(editButton)
+
+    //check if text field is now visible
+    const editTextField = screen.getByTitle("EditTextField")
+    expect(editTextField).toBeInTheDocument();
+
+  });
+
+  it("Should check if entering text in the text field and clicking enter makes text field invisible", async() => {
+    render(<Todo />);
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //get the edit button and click it
+    const editButton = screen.getByTitle("hello there")
+    fireEvent.click(editButton)
+
+    //Enter new text in the text field and press enter
+    const editTextField = screen.getByTestId("hello there");
+    fireEvent.change(editTextField, { target: { value: "how are you" } });
+    fireEvent.keyDown(editTextField, {
+      key: "Enter",
+      code: "Enter",
+      charCode: 13,
+    });
+
+    //check for presence of text field
+    const editTextField2 = screen.queryByTestId("EditTextField")
+    expect(editTextField2).not.toBeInTheDocument()
+  });
+
+  it("Should check if editing the text and pressing enter removes the old text and replaces with new text", async() => {
+    render(<Todo />);
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //get the edit button and click it
+    const editButton = screen.getByTitle("hello there")
+    fireEvent.click(editButton)
+
+    //Enter new text in the text field and press enter
+    const editTextField = screen.getByTestId("hello there");
+    fireEvent.change(editTextField, { target: { value: "how are you" } });
+    fireEvent.submit(editTextField);
+
+    //has old text disappeared?
+    const getRemovedText = screen.queryByText("hello there");
+    expect(getRemovedText).toBeNull();
+
+    //has new text appeared on screen?
+    const newListElement = screen.getByText("how are you");
+    expect(newListElement).toBeInTheDocument();
+  });
+
+  it("Should check if entering space in edit text area does not take it as a new value", async() => {
+    render(<Todo />);
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //get the edit button and click it
+    const editButton = screen.getByTitle("hello there")
+    fireEvent.click(editButton)
+
+    //Enter new text in the text field and press enter
+    const editTextField = screen.getByTestId("hello there");
+    fireEvent.change(editTextField, { target: { value: " " } });
+    fireEvent.submit(editTextField);
+
+    //does the old text still remain
+    const getRemovedText = screen.getByText("hello there");
+    expect(getRemovedText).toBeInTheDocument();
+
+  });
+
+  it("Should check if changing one element keeps the other elements unchanged", async() => {
+    render(<Todo />);
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //enter text in the text area
+    const textElement2 = screen.getByRole("textbox");
+    fireEvent.change(textElement2, { target: { value: "how are you" } });
+
+    //get the button element and press it
+    const buttonElement2 = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement2);
+
+    //get the edit button and click it
+    const editButton = screen.getByTitle("hello there")
+    fireEvent.click(editButton)
+
+    //Enter new text in the text field and press enter
+    const editTextField = screen.getByTestId("hello there");
+    fireEvent.change(editTextField, { target: { value: "Bonjour" } });
+    fireEvent.submit(editTextField);
+
+    //has old text disappeared?
+    const getRemovedText = screen.queryByText("hello there");
+    expect(getRemovedText).toBeNull();
+
+    //has new text appeared
+    const editedListItem = screen.getByText("Bonjour");
+    expect(editedListItem).toBeInTheDocument()
+
+    //is the rest of it unchanged
+    const newListElement = screen.getByText("how are you");
+    expect(newListElement).toBeInTheDocument();
+  });
+
 });
-
-

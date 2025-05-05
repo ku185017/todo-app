@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+
+//naming convention: handler instead of handle
+import { useState } from "react";
 import { TodoInput } from "./TodoInput";
 import { AddButton } from "./AddButton";
 import Divider from "@mui/material/Divider";
+import { Box } from "@mui/material";
 import { TasksList } from "./TasksList";
 import { CompletedTasksList } from "./CompletedTasksList";
+import Button from "@mui/material/Button";
+import { inputFormStyle, completedButtonStyle } from "./commonStyles";
 
 const Todo = () => {
   const [todo, setTodo] = useState("");
@@ -13,6 +18,10 @@ const Todo = () => {
   const [completedListArray, setCompletedListArray] = useState<String[]>([]);
 
   const [showCompleted, setShowCompleted] = useState(false);
+
+  const [isEditable, setIsEditable] = useState(-1);
+
+  const [editTodo, setEditTodo] = useState("");
 
   const handleChangeTodo = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (event.target.value.trim()) {
@@ -25,13 +34,42 @@ const Todo = () => {
     }
   };
 
-  const handleKeydownTodo = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-
-      setTodoListArray([...todoListArray, todo.trim()]);
-      setTodo("");
+  const handleListItemChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value.trim()) {
+      setEditTodo(event.target.value);
+      console.log("value is:", event.target.value);
+    } else {
+      setEditTodo(event.target.value);
+      console.log("value is: ", event.target.value);
     }
+  };
+
+  const handleEditFormSubmit = (
+    event: React.SyntheticEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    if (editTodo.trim()) {
+      const updatedTodoArray = todoListArray.map((t, index) => {
+        if (index === isEditable) {
+          return editTodo;
+        } else {
+          return t;
+        }
+      });
+      setTodoListArray(updatedTodoArray);
+    }
+
+    setIsEditable(-1);
+    setEditTodo("");
+  };
+
+  const handleFormSubmitTodo = (
+    event: React.SyntheticEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    setTodoListArray([...todoListArray, todo.trim()]);
+    setTodo("");
   };
 
   const handleAddButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -73,9 +111,14 @@ const Todo = () => {
     setShowCompleted(!showCompleted);
   };
 
-  useEffect(() => {
-    console.log("Updated todolist");
-  }, [todoListArray]);
+  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    
+    const buttonElement = event.target as HTMLButtonElement;
+    const eID = buttonElement.value as String;
+    setIsEditable(parseInt(buttonElement.value));
+
+    setEditTodo(todoListArray[parseInt(eID.toString())].toString());
+  };
 
   return (
     <Divider
@@ -85,43 +128,36 @@ const Todo = () => {
       variant="middle"
       sx={{ width: "100%" }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          textAlign: "center",
-          paddingTop: "2%",
-          paddingLeft: "1%",
-          width: "100%",
-        }}
-      >
+      <Box sx={inputFormStyle}>
         <TodoInput
           value={todo}
           handleChange={handleChangeTodo}
-          handleKey={handleKeydownTodo}
+          handleSubmit={handleFormSubmitTodo}
         />
         <AddButton
           addButtonClick={handleAddButtonClick}
           disabled={todo.trim() === ""}
         />
-      </div>
+      </Box>
 
       <TasksList
         todoListArray={todoListArray}
         handleTaskSelection={handleTaskSelection}
+        handleEditClick={handleEditClick}
+        handleChange={handleListItemChange}
+        handleEnter={handleEditFormSubmit}
+        isEditable={isEditable}
+        value={editTodo}
       />
 
-      <Divider
-        textAlign="left"
-        orientation="vertical"
-        onClick={showCompletedTasks}
-        sx={{
-          "&:hover": { backgroundColor: "rgb(204, 210, 241)", cursor: 'pointer' },
-          borderRadius: "15px",
-          width: "80%",
-        }}
-      >
-        <h3>Completed</h3>
+      <Divider orientation="vertical">
+        <Button
+          title="CompletedButton"
+          onClick={showCompletedTasks}
+          sx={completedButtonStyle}
+        >
+          Completed
+        </Button>
       </Divider>
 
       <CompletedTasksList

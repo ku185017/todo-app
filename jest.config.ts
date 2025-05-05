@@ -1,9 +1,7 @@
 import type { Config } from "@jest/types";
 const config: Config.InitialOptions = {
   verbose: true,
-  collectCoverageFrom: [
-    "src/components/**/*.{js,jsx,ts,tsx}",
-  ],
+  collectCoverageFrom: ["src/components/**/*.{js,jsx,ts,tsx}"],
   coveragePathIgnorePatterns: [".d.ts", ".stories.jsx", ".*[tT]ypes.ts$"],
   coverageReporters: ["lcov"],
   coverageDirectory: "coverage",
