@@ -11,7 +11,7 @@ test("Text Area renders properly", () => {
       handleSubmit={() => {
         console.log("key pressed");
       }}
-    />,
+    />
   );
   const textElement = screen.getByPlaceholderText("Enter task");
   expect(textElement).toHaveValue("hello there");

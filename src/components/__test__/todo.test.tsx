@@ -119,7 +119,7 @@ describe("Todo", () => {
     expect(listItemCompletedElement).toBeInTheDocument();
   });
 
-  it("Should check if checking checkbox in completed list removes element", async () => {
+  it("Should check if checking checkbox in completed list adds element back in todo list", async () => {
     render(<Todo />);
 
     //enter text in the text area
@@ -142,9 +142,11 @@ describe("Todo", () => {
     const listItemCompletedElement = screen.getByRole("checkbox");
     fireEvent.click(listItemCompletedElement);
 
-    //get the list item element again. This time, it should not be visible.
+    //get the list item element again. This time, it should be added to todo list
     const removedElement = screen.queryByText("hello there");
-    expect(removedElement).toBeNull();
+    expect(removedElement).toBeInTheDocument();
+
+    
   });
 
   it("Should check if clicking edit button makes text field visible", async() => {

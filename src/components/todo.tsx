@@ -1,10 +1,9 @@
-
 //naming convention: handler instead of handle
 import { useState } from "react";
 import { TodoInput } from "./TodoInput";
 import { AddButton } from "./AddButton";
 import Divider from "@mui/material/Divider";
-import { Box } from "@mui/material";
+import { AppBar, Box, Paper, Toolbar, Typography } from "@mui/material";
 import { TasksList } from "./TasksList";
 import { CompletedTasksList } from "./CompletedTasksList";
 import Button from "@mui/material/Button";
@@ -102,7 +101,7 @@ const Todo = () => {
       const anotherArray = completedListArray.filter(
         (t, index) => index !== completedtaskID
       );
-
+      setTodoListArray([...todoListArray, completedListArray[parseInt(completedtaskID.toString())].toString()]);
       setCompletedListArray(anotherArray);
     }
   };
@@ -112,7 +111,6 @@ const Todo = () => {
   };
 
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    
     const buttonElement = event.target as HTMLButtonElement;
     const eID = buttonElement.value as String;
     setIsEditable(parseInt(buttonElement.value));
@@ -128,16 +126,41 @@ const Todo = () => {
       variant="middle"
       sx={{ width: "100%" }}
     >
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Todo List
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      </Box>
+
       <Box sx={inputFormStyle}>
-        <TodoInput
-          value={todo}
-          handleChange={handleChangeTodo}
-          handleSubmit={handleFormSubmitTodo}
-        />
-        <AddButton
-          addButtonClick={handleAddButtonClick}
-          disabled={todo.trim() === ""}
-        />
+        <Paper
+          elevation={5}
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            paddingTop: "0.5%",
+            paddingBottom: "0.5%",
+            paddingLeft: "0.5%",
+            paddingRight: "0.2%",
+            alignSelf: "flex-start",
+            justifyContent: "space-between",
+          }}
+        >
+          <TodoInput
+            value={todo}
+            handleChange={handleChangeTodo}
+            handleSubmit={handleFormSubmitTodo}
+          />
+          <AddButton
+            addButtonClick={handleAddButtonClick}
+            disabled={todo.trim() === ""}
+          />
+        </Paper>
       </Box>
 
       <TasksList
@@ -153,12 +176,16 @@ const Todo = () => {
       <Divider orientation="vertical">
         <Button
           title="CompletedButton"
+          //variant="outlined"
+          
           onClick={showCompletedTasks}
           sx={completedButtonStyle}
         >
           Completed
         </Button>
       </Divider>
+
+      <Box style={{ height: "20" }}></Box>
 
       <CompletedTasksList
         showCompleted={showCompleted}
