@@ -13,6 +13,7 @@ type TasksListProp = {
   handleEditClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   handleEnter: (event: React.SyntheticEvent<HTMLFormElement>) => void;
+  handleDelete: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export const TasksList = (props: TasksListProp) => {
@@ -58,6 +59,11 @@ export const TasksList = (props: TasksListProp) => {
                     value={index}
                   >
                     Edit
+                  </Button>
+                  <Button title={task.toString().concat(" delete")}
+                  onClick = {props.handleDelete}
+                  value={index}>
+                    Delete
                   </Button>
                 </Box>
               </ListItem>

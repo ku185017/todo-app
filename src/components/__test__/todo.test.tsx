@@ -291,4 +291,23 @@ describe("Todo", () => {
     expect(newListElement).toBeInTheDocument();
   });
 
+  it("Should check if pressing delete button removes element from the list", async() => {
+    render(<Todo />);
+    //enter text in the text area
+    const textElement = screen.getByRole("textbox");
+    fireEvent.change(textElement, { target: { value: "hello there" } });
+
+    //get the button element and press it
+    const buttonElement = screen.getByTitle("AddButton");
+    fireEvent.click(buttonElement);
+
+    //get the delete button and press it
+    const buttonDelete = screen.getByTitle("hello there delete");
+    fireEvent.click(buttonDelete);
+
+    //check if hello there is deleted
+    const removed = screen.queryByText("hello there")
+    expect(removed).toBeNull();
+  });
+
 });

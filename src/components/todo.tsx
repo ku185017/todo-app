@@ -93,6 +93,18 @@ const Todo = () => {
     }
   };
 
+  const handleTaskDeletion=(event: React.MouseEvent<HTMLButtonElement>) => {
+    const mouseEvent = event.target as HTMLButtonElement
+    const taskID = parseInt(mouseEvent.value);
+    
+
+    const anotherArray = todoListArray.filter((t, index) => index !== taskID);
+    console.log(anotherArray);
+
+    setTodoListArray(anotherArray);
+
+  }
+
   const handleCompletedTaskDeletion = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -171,6 +183,7 @@ const Todo = () => {
         handleEnter={handleEditFormSubmit}
         isEditable={isEditable}
         value={editTodo}
+        handleDelete={handleTaskDeletion}
       />
 
       <Divider orientation="vertical">
