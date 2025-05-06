@@ -73,8 +73,6 @@
     "@mui/system": "^5.13.2",
     "@mui/x-data-grid-premium": "^7.6.2",
     "@mui/x-data-grid-pro": "^7.6.2",
-    "@nvdb/theme": "^0.6.4",
-    "@nxg-web/web-platform": "1.0.0-M3-5",
     "@swc/helpers": "~0.5.0",
     "ajv": "^8.12.0",
     "dompurify": "^3.2.4",
